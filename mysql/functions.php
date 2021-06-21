@@ -23,12 +23,22 @@ function UpdateTable(){
     if(isset($_POST['submit'])){
         $user = $_POST['username'];
         $pass = $_POST['password'];
+
+        $user =mysqli_real_escape_string($connection, $user);
+        $pass = mysqli_real_escape_string($connection, $pass);
+
+        $hashFormat = "$2y$10$";
+        $salt = "iusesomecrazystrings22";
+        $hashF_and_salt = $hashFormat . $salt;
+
+        $password  = crypt($pass,$hashF_and_salt);
+
         $id = $_POST['id'];
         if($user&&$pass&&$id){
 
             $query = "UPDATE users SET ";
             $query .="username = '$user', ";
-            $query .="password = '$pass' ";
+            $query .="password = '$password' ";
             $query .="WHERE id = $id ";
 
             $result = mysqli_query($connection,$query);
@@ -61,9 +71,18 @@ function CreateTable()
     if (isset($_POST['submit'])) {
         $pass = $_POST['password'];
         $user = $_POST['username'];
+
+        $user =mysqli_real_escape_string($connection, $user);
+        $pass = mysqli_real_escape_string($connection, $pass);
+
+        $hashFormat = "$2y$10$";
+        $salt = "iusesomecrazystrings22";
+        $hashF_and_salt = $hashFormat . $salt;
+
+        $password  = crypt($pass,$hashF_and_salt);
         if ($pass && $user) {
             $query = "INSERT INTO users(username,password)";
-            $query .= "VALUES('$user','$pass')";
+            $query .= "VALUES('$user','$password')";
             $result = mysqli_query($connection, $query);
             if (!$result) {
                 die("query faild" . mysqli_error());
